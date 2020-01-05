@@ -184,6 +184,8 @@ async def on_message(message):
         if vals[1] == "messages":
             print("Graphed")
             Mcount = np.load("Mcount.npy")
+            fig = plt.figure()
+            ax = fig.gca()
             ax.plot(np.linspace(0,len(Mcount)/6,len(Mcount)),c='black')
             plt.xlabel("Time(hours)")
             plt.ylabel("Messages")
