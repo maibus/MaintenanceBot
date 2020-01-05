@@ -13,15 +13,19 @@ from bs4 import BeautifulSoup
 import re
 
 Fcount = np.load("Fcount.npy")
+Mcount = np.load("Mcount.npy")
 names = np.load("names.npy")
 points = np.load("points.npy")
+msgvar = 0
 print(names,points)
 
-TOKEN = 'NjQ4MTM4MjA3MTk1ODI0MTI5.Xdp-Mw.YBtnMrsFf5Zx1tPyWMu3r6X9HNE'#fake token
+TOKEN = 'NjQ4MTM4MjA3MTk1ODI0MTI5.XhIpOA.lwsRx7-0R9j0HTcDhSRLlVNa6Y0'
 client = discord.Client()
     
 @client.event
 async def on_message(message):
+    global msgvar
+    msgvar += 1
     def prime_factors(n):  #fun function for !tag_factors function
         i = 2
         factors = []
@@ -76,7 +80,7 @@ async def on_message(message):
             if x[i] == inp01:
                 print("nein")
                 FLIP = True
-        inp0 = 'CT-'+' '+message.author.discriminator+' '+inp0
+        inp0 = 'CT-'+' '+message.author.discriminator++' '+inp0
         if inp[0] == ' ':
             inp = inp[1:]
         role = discord.utils.get(message.guild.roles,name=inp)
@@ -176,23 +180,31 @@ async def on_message(message):
         except ValueError:
             await message.channel.send("No Offences")
     if message.content.startswith("!graph"):
-        Fcount = np.load("Fcount.npy")
-        print("Graphed")
-        Spark = Fcount[::4]
-        Nova = Fcount[1:][::4]
-        Pyro = Fcount[2:][::4]
-        Ember = Fcount[3:][::4]
-        Total = Spark+Nova+Pyro+Ember
-        fig = plt.figure()
-        ax = fig.gca()
-        ax.plot(np.linspace(0,len(Spark)/6,len(Spark)),Spark,c='red',label="Spark")
-        ax.plot(np.linspace(0,len(Spark)/6,len(Spark)),Nova,c='blue',label="Nova")
-        ax.plot(np.linspace(0,len(Spark)/6,len(Spark)),Pyro,c='green',label="Pyro")
-        ax.plot(np.linspace(0,len(Spark)/6,len(Spark)),Ember,c='yellow',label="Ember")
-        ax.plot(np.linspace(0,len(Spark)/6,len(Spark)),Total,c='black',label="Total")
-        plt.xlabel("Time(hours)")
-        plt.ylabel("Members")
-        plt.legend()
+        vals = message.content.split(',')
+        if vals[1] == "messages":
+            print("Graphed")
+            Mcount = np.load("Mcount.npy")
+            ax.plot(np.linspace(0,len(Mcount)/6,len(Mcount)),c='black')
+            plt.xlabel("Time(hours)")
+            plt.ylabel("Messages")
+        elif vals[1] == "members":
+            print("Graphed")
+            Fcount = np.load("Fcount.npy")
+            Spark = Fcount[::4]
+            Nova = Fcount[1:][::4]
+            Pyro = Fcount[2:][::4]
+            Ember = Fcount[3:][::4]
+            Total = Spark+Nova+Pyro+Ember
+            fig = plt.figure()
+            ax = fig.gca()
+            ax.plot(np.linspace(0,len(Spark)/6,len(Spark)),Spark,c='red',label="Spark")
+            ax.plot(np.linspace(0,len(Spark)/6,len(Spark)),Nova,c='blue',label="Nova")
+            ax.plot(np.linspace(0,len(Spark)/6,len(Spark)),Pyro,c='green',label="Pyro")
+            ax.plot(np.linspace(0,len(Spark)/6,len(Spark)),Ember,c='yellow',label="Ember")
+            ax.plot(np.linspace(0,len(Spark)/6,len(Spark)),Total,c='black',label="Total")
+            plt.xlabel("Time(hours)")
+            plt.ylabel("Members")
+            plt.legend()
         plt.savefig("disc_graph.png")
         ax.clear()
         plt.close("all")
@@ -268,7 +280,15 @@ async def on_message(message):
 
 @tasks.loop(seconds=600.0)
 async def slow_count():
+    global msgvar
     Fcount = np.load("Fcount.npy")
+    Mcount = np.load("Mcount.npy")
+    try:
+        Mcount = np.append(Mcount,msgvar)
+    except NameError:
+        pass
+    np.save("Mcount",Mcount)
+    msgvar = 0
     guild = client.get_guild(646793342595760150)
     memberson = sum(member.status!=discord.Status.offline and not member.bot for member in guild.members)
     print(memberson)
