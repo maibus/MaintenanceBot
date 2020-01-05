@@ -98,10 +98,10 @@ async def on_message(message):
                 print(reaction)
                 if str(reaction) == '✅':
                     print(reaction,"A")
+                    inp0 = ' '+inp0
                     print(inp0)
                     await message.author.edit(nick=inp0)
                     await message.author.add_roles(discord.utils.get(message.author.guild.roles, name="Cadet"))
-                    await message.author.add_roles(discord.utils.get(message.author.guild.roles, name="Member"))
                 else:
                     print(reaction,"B")
                     await message.channel.send('Its treason then! (Your name has not been approved, please wait for an SCO to make contact.)')
@@ -196,6 +196,7 @@ async def on_message(message):
         plt.legend()
         plt.savefig("disc_graph.png")
         ax.clear()
+        plt.close("all")
         await message.channel.send(file=discord.File('disc_graph.png'))
     if message.content.startswith('!wookie'):
         vals = message.content.split(',')
