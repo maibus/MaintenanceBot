@@ -186,7 +186,7 @@ async def on_message(message):
             Mcount = np.load("Mcount.npy")
             fig = plt.figure()
             ax = fig.gca()
-            ax.plot(np.linspace(0,len(Mcount)/6,len(Mcount)),c='black')
+            ax.plot(np.linspace(0,len(Mcount)/6,len(Mcount)),Mcount,c='black')
             plt.xlabel("Time(hours)")
             plt.ylabel("Messages")
         elif vals[1] == "members":
