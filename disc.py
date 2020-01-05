@@ -76,7 +76,7 @@ async def on_message(message):
             if x[i] == inp01:
                 print("nein")
                 FLIP = True
-        inp0 = 'CT-'+' '+message.author.discriminator+inp0
+        inp0 = 'CT-'+' '+message.author.discriminator+' '+inp0
         if inp[0] == ' ':
             inp = inp[1:]
         role = discord.utils.get(message.guild.roles,name=inp)
@@ -98,7 +98,6 @@ async def on_message(message):
                 print(reaction)
                 if str(reaction) == '✅':
                     print(reaction,"A")
-                    inp0 = ' '+inp0
                     print(inp0)
                     await message.author.edit(nick=inp0)
                     await message.author.add_roles(discord.utils.get(message.author.guild.roles, name="Cadet"))
