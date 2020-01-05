@@ -17,7 +17,7 @@ names = np.load("names.npy")
 points = np.load("points.npy")
 print(names,points)
 
-TOKEN = 'ABCDEF'#fake token
+TOKEN = 'NjQ4MTM4MjA3MTk1ODI0MTI5.Xdp-Mw.YBtnMrsFf5Zx1tPyWMu3r6X9HNE'#fake token
 client = discord.Client()
     
 @client.event
