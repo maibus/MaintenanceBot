@@ -26,6 +26,10 @@ client = discord.Client()
 async def on_message(message):
     global msgvar
     msgvar += 1
+    auth_names = ['Sergeant','Sergeant Major','Drill Sergeant','Lieutenant','2nd Lieutenant','Captain']
+    auths = []
+    for n in range(len(auth_names)):
+        auths.append(discord.utils.find(lambda r: r.name == auth_names[n], message.guild.roles))
     def prime_factors(n):  #fun function for !tag_factors function
         i = 2
         factors = []
@@ -41,11 +45,6 @@ async def on_message(message):
     if message.author == client.user:#dont want bot replying to itself
         return
     if message.content.startswith('!roles'):#giving roles
-        roles = [
-        "647509537565442108",
-        "647509587208962059",
-        "647509538576007174",
-        ]
         role_list = ["PC", "X-box", "PS4"] 
         vals = message.content.split(",")
         print(vals[1])
@@ -117,25 +116,7 @@ async def on_message(message):
             print(member.display_name)
         print(len(x))
     if message.content.startswith('!warn'):
-        auth = False
-        rolesrg = discord.utils.find(lambda r: r.name == 'Sergeant', message.guild.roles)
-        rolecsm = discord.utils.find(lambda r: r.name == 'Sergeant Major', message.guild.roles)
-        roledsm = discord.utils.find(lambda r: r.name == 'Drill Sergeant', message.guild.roles)
-        role2lt = discord.utils.find(lambda r: r.name == '2nd Lieutenant', message.guild.roles)
-        rolelt = discord.utils.find(lambda r: r.name == 'Lieutenant', message.guild.roles)
-        rolecpt = discord.utils.find(lambda r: r.name == 'Captain', message.guild.roles)
-        if rolesrg in message.author.roles:
-            auth = True
-        if rolecsm in message.author.roles:
-            auth = True
-        if roledsm in message.author.roles:
-            auth = True
-        if role2lt in message.author.roles:
-            auth = True
-        if rolelt in message.author.roles:
-            auth = True
-        if rolecpt in message.author.roles:
-            auth = True
+        auth = not set(message.author.roles).isdisjoint(auths)#cheks if user has any of the leadership roles stored in auths
         if auth == True:
             names = np.load("names.npy")
             points = np.load("points.npy")
