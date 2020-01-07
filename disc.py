@@ -17,15 +17,21 @@ Mcount = np.load("Mcount.npy")
 names = np.load("names.npy")
 points = np.load("points.npy")
 msgvar = 0
+group_names = ['Spark Platoon','Nova Platoon','Pyro Platoon','Ember Platoon']
 print(names,points)
 
-TOKEN = 'NjQ4MTM4MjA3MTk1ODI0MTI5.XhIpOA.lwsRx7-0R9j0HTcDhSRLlVNa6Y0'
+TOKEN = 'NjY0MTU2MGJfdcfGVy.XhS9oQ.CUnbLOgGBB-OCkDmrP0mMphrlDA'#fake token
 client = discord.Client()
     
 @client.event
 async def on_message(message):
     global msgvar
+    global group_names
     msgvar += 1
+    auth_names = ['Sergeant','Sergeant Major','Drill Sergeant','Lieutenant','2nd Lieutenant','Captain']
+    auths = []
+    for n in range(len(auth_names)):
+        auths.append(discord.utils.find(lambda r: r.name == auth_names[n], message.guild.roles))
     def prime_factors(n):  #fun function for !tag_factors function
         i = 2
         factors = []
@@ -41,11 +47,6 @@ async def on_message(message):
     if message.author == client.user:#dont want bot replying to itself
         return
     if message.content.startswith('!roles'):#giving roles
-        roles = [
-        "647509537565442108",
-        "647509587208962059",
-        "647509538576007174",
-        ]
         role_list = ["PC", "X-box", "PS4"] 
         vals = message.content.split(",")
         print(vals[1])
@@ -80,7 +81,7 @@ async def on_message(message):
             if x[i] == inp01:
                 print("nein")
                 FLIP = True
-        inp0 = 'CT-'+' '+message.author.discriminator++' '+inp0
+        inp0 = 'CT-'+' '+message.author.discriminator+' '+inp0
         if inp[0] == ' ':
             inp = inp[1:]
         role = discord.utils.get(message.guild.roles,name=inp)
@@ -117,25 +118,7 @@ async def on_message(message):
             print(member.display_name)
         print(len(x))
     if message.content.startswith('!warn'):
-        auth = False
-        rolesrg = discord.utils.find(lambda r: r.name == 'Sergeant', message.guild.roles)
-        rolecsm = discord.utils.find(lambda r: r.name == 'Sergeant Major', message.guild.roles)
-        roledsm = discord.utils.find(lambda r: r.name == 'Drill Sergeant', message.guild.roles)
-        role2lt = discord.utils.find(lambda r: r.name == '2nd Lieutenant', message.guild.roles)
-        rolelt = discord.utils.find(lambda r: r.name == 'Lieutenant', message.guild.roles)
-        rolecpt = discord.utils.find(lambda r: r.name == 'Captain', message.guild.roles)
-        if rolesrg in message.author.roles:
-            auth = True
-        if rolecsm in message.author.roles:
-            auth = True
-        if roledsm in message.author.roles:
-            auth = True
-        if role2lt in message.author.roles:
-            auth = True
-        if rolelt in message.author.roles:
-            auth = True
-        if rolecpt in message.author.roles:
-            auth = True
+        auth = not set(message.author.roles).isdisjoint(auths)#cheks if user has any of the leadership roles stored in auths
         if auth == True:
             names = np.load("names.npy")
             points = np.load("points.npy")
@@ -192,18 +175,12 @@ async def on_message(message):
         elif vals[1] == "members":
             print("Graphed")
             Fcount = np.load("Fcount.npy")
-            Spark = Fcount[::4]
-            Nova = Fcount[1:][::4]
-            Pyro = Fcount[2:][::4]
-            Ember = Fcount[3:][::4]
-            Total = Spark+Nova+Pyro+Ember
+            Total = np.sum(np.reshape(Fcount,[4,int(len(Fcount)/4)]),axis=0)
             fig = plt.figure()
             ax = fig.gca()
-            ax.plot(np.linspace(0,len(Spark)/6,len(Spark)),Spark,c='red',label="Spark")
-            ax.plot(np.linspace(0,len(Spark)/6,len(Spark)),Nova,c='blue',label="Nova")
-            ax.plot(np.linspace(0,len(Spark)/6,len(Spark)),Pyro,c='green',label="Pyro")
-            ax.plot(np.linspace(0,len(Spark)/6,len(Spark)),Ember,c='yellow',label="Ember")
-            ax.plot(np.linspace(0,len(Spark)/6,len(Spark)),Total,c='black',label="Total")
+            for a in range(len(group_names)):
+                ax.plot(np.linspace(0,len(Fcount)/24,len(Fcount)/4),Fcount[a:][::len(group_names)],label=group_names[a])
+            ax.plot(np.linspace(0,len(Fcount)/24,len(Fcount)/4),Total,c='black',label="Total")
             plt.xlabel("Time(hours)")
             plt.ylabel("Members")
             plt.legend()
@@ -283,6 +260,7 @@ async def on_message(message):
 @tasks.loop(seconds=600.0)
 async def slow_count():
     global msgvar
+    global group_names
     Fcount = np.load("Fcount.npy")
     Mcount = np.load("Mcount.npy")
     try:
@@ -294,16 +272,14 @@ async def slow_count():
     guild = client.get_guild(646793342595760150)
     memberson = sum(member.status!=discord.Status.offline and not member.bot for member in guild.members)
     print(memberson)
-    rolespk = discord.utils.find(lambda r: r.name == 'Spark Platoon', guild.roles)
-    rolenva = discord.utils.find(lambda r: r.name == 'Nova Platoon', guild.roles)
-    rolepyr = discord.utils.find(lambda r: r.name == 'Pyro Platoon', guild.roles)
-    roleemb = discord.utils.find(lambda r: r.name == 'Ember Platoon', guild.roles)
-    Mspk = sum(member.status!=discord.Status.offline and not member.bot and rolespk in member.roles for member in guild.members)
-    Mnva = sum(member.status!=discord.Status.offline and not member.bot and rolenva in member.roles for member in guild.members)
-    Mpyr = sum(member.status!=discord.Status.offline and not member.bot and rolepyr in member.roles for member in guild.members)
-    Memb = sum(member.status!=discord.Status.offline and not member.bot and roleemb in member.roles for member in guild.members)
-    Fcount = np.append(Fcount,np.array([Mspk,Mnva,Mpyr,Memb]))
-    print(np.array([Mspk,Mnva,Mpyr,Memb]))
+    groups = []
+    for n in range(len(group_names)):
+        groups.append(discord.utils.find(lambda r: r.name == group_names[n], guild.roles))
+    on_array = []
+    for m in range(len(groups)):
+        on_array.append(sum(member.status!=discord.Status.offline and not member.bot and groups[m] in member.roles for member in guild.members))      
+    Fcount = np.append(Fcount,on_array)
+    print(on_array)
     np.save("Fcount",Fcount)
     print(slow_count.current_loop)
 
