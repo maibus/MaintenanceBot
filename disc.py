@@ -179,7 +179,7 @@ async def on_message(message):
             fig = plt.figure()
             ax = fig.gca()
             for a in range(len(group_names)):
-                ax.plot(np.linspace(0,len(Fcount)/24,len(Fcount)/4),Fcount[a:][::len(group_names)],label=group_names[a])
+                ax.plot(np.linspace(0,len(Fcount)/24,int(len(Fcount)/4)),Fcount[a:][::len(group_names)],label=group_names[a])
             ax.plot(np.linspace(0,len(Fcount)/24,len(Fcount)/4),Total,c='black',label="Total")
             plt.xlabel("Time(hours)")
             plt.ylabel("Members")
