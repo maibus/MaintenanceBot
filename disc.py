@@ -20,7 +20,7 @@ msgvar = 0
 group_names = ['Spark Platoon','Nova Platoon','Pyro Platoon','Ember Platoon']
 print(names,points)
 
-TOKEN = 'NjQ4MTM4MjA3MTk1ODI0MTI5.XhIpOA.lwsRx7-0R9j0HTcDhSRLlVNa6Y0'
+TOKEN = 'NjY0MTU2MGJfdcfGVy.XhS9oQ.CUnbLOgGBB-OCkDmrP0mMphrlDA'#fake token
 client = discord.Client()
     
 @client.event
@@ -81,7 +81,7 @@ async def on_message(message):
             if x[i] == inp01:
                 print("nein")
                 FLIP = True
-        inp0 = 'CT-'+' '+message.author.discriminator++' '+inp0
+        inp0 = 'CT-'+' '+message.author.discriminator+' '+inp0
         if inp[0] == ' ':
             inp = inp[1:]
         role = discord.utils.get(message.guild.roles,name=inp)
@@ -179,8 +179,8 @@ async def on_message(message):
             fig = plt.figure()
             ax = fig.gca()
             for a in range(len(group_names)):
-                ax.plot(np.linspace(0,len(Fcount)/24,len(Fcount)/4),Fcount[::len(group_names)],label="group_names[a])
-            ax.plot(np.linspace(0,len(Spark)/6,len(Spark)),Total,c='black',label="Total")
+                ax.plot(np.linspace(0,len(Fcount)/24,len(Fcount)/4),Fcount[a:][::len(group_names)],label=group_names[a])
+            ax.plot(np.linspace(0,len(Fcount)/24,len(Fcount)/4),Total,c='black',label="Total")
             plt.xlabel("Time(hours)")
             plt.ylabel("Members")
             plt.legend()
