@@ -175,10 +175,11 @@ async def on_message(message):
         elif vals[1] == "members":
             print("Graphed")
             Fcount = np.load("Fcount.npy")
-            Total = np.sum(np.reshape(Fcount,[4,int(len(Fcount)/4)]),axis=0)
+            Total = np.zeros([int(len(Fcount)/4)])
             fig = plt.figure()
             ax = fig.gca()
             for a in range(len(group_names)):
+                Total += Fcount[a:][::len(group_names)]
                 ax.plot(np.linspace(0,len(Fcount)/24,int(len(Fcount)/4)),Fcount[a:][::len(group_names)],label=group_names[a])
             ax.plot(np.linspace(0,len(Fcount)/24,int(len(Fcount)/4)),Total,c='black',label="Total")
             plt.xlabel("Time(hours)")
